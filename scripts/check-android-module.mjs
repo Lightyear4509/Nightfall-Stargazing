@@ -6,12 +6,15 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const moduleConfigPath = path.join(root, 'modules', 'local-gnss', 'expo-module.config.json');
 const manifestPath = path.join(root, 'modules', 'local-gnss', 'android', 'src', 'main', 'java', 'app', 'stargazing', 'gnss', 'LocalGnssModule.kt');
+const gradlePath = path.join(root, 'modules', 'local-gnss', 'android', 'build.gradle');
 const moduleConfig = JSON.parse(fs.readFileSync(moduleConfigPath, 'utf8'));
 const source = fs.readFileSync(manifestPath, 'utf8');
+const gradle = fs.readFileSync(gradlePath, 'utf8');
 
 assert.ok(moduleConfig.platforms.includes('android'), 'local GNSS module must be registered for Android');
 assert.ok(moduleConfig.android.modules.includes('app.stargazing.gnss.LocalGnssModule'), 'module class path must match Expo autolinking config');
 assert.match(source, /class LocalGnssModule\s*:\s*Module\(\)/, 'Kotlin Expo module source must exist in the repository');
+assert.match(gradle, /defaultConfig\s*\{[^}]*versionName\s+project\.version\.toString\(\)/s, 'Expo module publication requires a defaultConfig versionName');
 assert.match(source, /Name\("LocalGnss"\)/, 'native module name must match the TypeScript bridge');
 assert.match(source, /LocationManager\.GPS_PROVIDER/, 'updates must use the device GPS provider');
 assert.match(source, /requestLocationUpdates\(LocationManager\.GPS_PROVIDER/, 'native watcher must actually request GPS provider updates');

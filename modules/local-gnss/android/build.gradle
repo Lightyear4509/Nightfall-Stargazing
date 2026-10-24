@@ -8,4 +8,7 @@ version = '0.1.0'
 
 android {
   namespace 'app.stargazing.gnss'
+  defaultConfig {
+    versionName project.version.toString()
+  }
 }
