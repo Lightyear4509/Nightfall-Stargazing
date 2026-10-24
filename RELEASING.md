@@ -2,11 +2,11 @@
 
 ## Current status
 
-Nightfall Stargazing does not have a public GitHub repository or release yet. This workspace has no configured Git remote, so the GitHub Actions workflow has not run and no APK or web download is available. A local web PWA archive has since been built at `release-assets/Nightfall-Stargazing-Web-v0.1.0.zip` with a matching SHA-256 file; it has not been published and is ignored by Git. See [SOURCE_OF_TRUTH.md](SOURCE_OF_TRUTH.md) for the durable project record.
+The source is published in the public repository [Lightyear4509/Space-App](https://github.com/Lightyear4509/Space-App). The app name is **Nightfall Stargazing**; changing the repository slug to `Nightfall-Stargazing` is still pending. GitHub Actions run #2 is building the web export and Android preview APK. Until the run succeeds and artifacts are available, there is no verified downloadable APK or web artifact. A local web PWA archive also exists at `release-assets/Nightfall-Stargazing-Web-v0.1.0.zip` with a matching SHA-256 file; it has not been published and is ignored by Git. See [SOURCE_OF_TRUTH.md](SOURCE_OF_TRUTH.md) for the durable project record.
 
 ## Android preview download
 
-After the repository is connected and the **Build checks** workflow succeeds:
+After the current **Build checks** workflow succeeds:
 
 1. Open the successful workflow run in the repository's **Actions** tab.
 2. Download the `stargazing-android-preview-apk` artifact and extract its ZIP file.
@@ -16,7 +16,7 @@ The preview APK contains the JavaScript app bundle and is checked for foreground
 
 ## Permanent GitHub preview release
 
-After the repository is connected, update `app.json` to the intended semantic version (for example `0.1.0`), merge the changes to the default branch, and push a matching version tag such as `v0.1.0`. The `publish-preview` job runs only for `v*` tags, waits for both web and Android jobs to pass, verifies that the tag matches `app.json`, and publishes a GitHub **pre-release** with the Android APK, a root-ready web PWA ZIP, release notes, and `SHA256SUMS.txt`. The APK remains development-signed and is not for Play Store distribution. A tag push is a public release action; review the source, privacy notice, and attribution before tagging.
+After the current workflow succeeds and its artifacts are reviewed, a matching version tag such as `v0.1.0` can publish the configured GitHub **pre-release**. The `publish-preview` job runs only for `v*` tags, waits for both web and Android jobs to pass, verifies that the tag matches `app.json`, and publishes the Android APK, a root-ready web PWA ZIP, release notes, and `SHA256SUMS.txt`. The APK remains development-signed and is not for Play Store distribution. A tag push is a public release action; review the source, privacy notice, and attribution before tagging.
 
 The workflow's repository `contents: write` permission is scoped only to the tag-gated publishing job. Build jobs retain read-only repository permissions; the publishing job has read access to workflow artifacts.
 

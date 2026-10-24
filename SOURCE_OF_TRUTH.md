@@ -505,3 +505,9 @@ ightfall-51d53bc0eb44cf78).
 
 - Published local branch `main` to the user-supplied public repository `https://github.com/Lightyear4509/Space-App`. GitHub reports remote head `60d0baa25998373040b5035542b5e8dbdf586dca`, matching the local `Record GitHub publication checkpoint` commit. The repository is now populated with the source project and its append-only history.
 - The app-name rename to `Nightfall-Stargazing` remains pending. The connected GitHub tools can verify and publish repository content but do not provide repository settings updates; the browser session is signed out. No app-store release or hosted web deployment has been performed.
+
+### 2026-10-24 — GitHub CI started and release guidance corrected
+
+- The public GitHub Actions **Build checks** workflow started on the published `main` branch (run 2, commit `1b97736`). At observation time the web job had exported the PWA, passed its generated-worker/offline simulation, and uploaded its web artifact; the Android job was still installing SDK packages. No final workflow conclusion or downloadable APK had yet been verified.
+- Corrected stale current-state wording in `README.md` and `RELEASING.md`: the source repository and remote now exist, CI is running, and artifact availability depends on successful job completion. Both documents identify the pending repository rename and retain the preview-versus-production signing distinction.
+- Verified the browser GitHub session is signed out and GitHub CLI is unavailable locally. The available GitHub connector has no repository-rename operation, so the requested `Space-App` to `Nightfall-Stargazing` rename still requires an authenticated repository-settings session or an equivalent owner-authorized GitHub API path.
