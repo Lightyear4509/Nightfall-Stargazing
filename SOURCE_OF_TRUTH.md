@@ -500,3 +500,8 @@ ightfall-51d53bc0eb44cf78).
 
 - After the preceding entry, created local root commit `967aa24` (`Initial Nightfall Stargazing preview source`) containing the reviewed project files. Its author uses the account's GitHub no-reply address. `git status --short` is clean; no Git remote is configured. Generated builds, dependency directories, Android build output, local release archives, and caches were excluded from the commit.
 - Correction to the preceding entry's timing: a local commit now exists, but the GitHub repository has not been renamed and no source has been pushed. The public repository remains `Lightyear4509/Space-App`; its settings page is unavailable in the signed-out browser, and the connected GitHub capability here does not expose repository rename. Publication is ready once an authenticated write path and renamed destination are available.
+
+### 2026-10-24 — Initial source published to GitHub
+
+- Published local branch `main` to the user-supplied public repository `https://github.com/Lightyear4509/Space-App`. GitHub reports remote head `60d0baa25998373040b5035542b5e8dbdf586dca`, matching the local `Record GitHub publication checkpoint` commit. The repository is now populated with the source project and its append-only history.
+- The app-name rename to `Nightfall-Stargazing` remains pending. The connected GitHub tools can verify and publish repository content but do not provide repository settings updates; the browser session is signed out. No app-store release or hosted web deployment has been performed.
