@@ -20,6 +20,10 @@ The **v0.2.0 preview** is published on GitHub with a sideloadable Android APK an
 - Branded Android launcher icon and matching PWA/iOS web-install icon sizes generated from one bundled vector mark.
 - Android uses the device GNSS provider only while the app is open; it requests no background location and is configured without Internet permission. Static web export includes a service-worker precache for offline use after the first visit.
 
+### Stellarium feature-parity work in the current source tree
+
+The published v0.2.0 preview remains the current public release. The working source now adds persistent Sky / Tonight / Explore / Saved bottom navigation, an offline 12-hour selected-object altitude path, and a three-stop interactive beginner sky guide. The path uses bundled ephemeris/catalog data. These changes are not part of the published v0.2.0 downloads yet. The broader, staged capability comparison—including sensor pointing, camera AR, satellite/minor-body data, culture-specific sky guides, object imagery, eyepiece preview, and telescope control—is documented in [STELLARIUM_PARITY.md](STELLARIUM_PARITY.md). Similar capabilities are planned with an original Nightfall interface and independently sourced/licensed assets.
+
 ### Known limits before a general release
 
 - Catalog stars use HYG v4.1 J2000 coordinates and proper motion with precession/nutation conversion. Imported catalog records have not yet been independently checked against another reference set; curated facts and the six curated deep-sky entries also need review.
@@ -55,6 +59,7 @@ GitHub Actions type-checks the app, scans app-owned runtime source for direct ne
 ## Project references
 
 - [SOURCE_OF_TRUTH.md](SOURCE_OF_TRUTH.md) is the append-only product and work record. Never delete or rewrite its existing text; add dated entries.
+- [STELLARIUM_PARITY.md](STELLARIUM_PARITY.md) maps publicly documented Stellarium capabilities to Nightfall’s existing features, privacy constraints, and delivery sequence.
 - [RELEASING.md](RELEASING.md) explains current GitHub artifact downloads, Android preview installation, web hosting requirements, and remaining public-release gates.
 - [DATA_LICENSES.md](DATA_LICENSES.md) records catalog sources, transformations, and attribution obligations.
 - [PRIVACY.md](PRIVACY.md) is a draft notice that must be reconciled with signed release builds before publication.

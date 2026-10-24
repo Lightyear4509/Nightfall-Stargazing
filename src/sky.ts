@@ -5,6 +5,7 @@ export type SkyPoint = SkyObject & { altitude: number; azimuth: number; illumina
 export type Observer = { latitude: number; longitude: number; height?: number };
 export type HorizonEvent = { kind: 'rise' | 'set'; time: Date };
 export type TonightTarget = { point: SkyPoint; bestAltitude: number; bestTime: Date };
+export type SkyPathSample = { time: Date; altitude: number; azimuth: number };
 
 export const planets = [
   { id:'sun', name:'Sun', body:Astronomy.Body.Sun, kind:'Sun' as const, color:'#fff0b2', magnitude:-26.74, description:'The star at the center of our Solar System. Never look directly at the Sun without proper eye protection.' },
@@ -88,6 +89,18 @@ function pointAt(object: SkyPoint, date: Date, observer: Observer): SkyPoint | n
   const horizon = Astronomy.Horizon(time, location, equatorial.ra, equatorial.dec, 'normal');
   const illumination = Astronomy.Illumination(body, time);
   return { ...object, magnitude: illumination.mag, altitude: horizon.altitude, azimuth: horizon.azimuth, illumination: illumination.phase_fraction };
+}
+
+/** Samples a target's local altitude and azimuth for an offline observing path. */
+export function sampleSkyPath(object: SkyPoint, start: Date, observer: Observer, durationHours = 12, stepMinutes = 30): SkyPathSample[] {
+  const safeDuration = Math.max(1, Math.min(48, durationHours));
+  const safeStep = Math.max(5, Math.min(120, stepMinutes));
+  const count = Math.ceil(safeDuration * 60 / safeStep);
+  return Array.from({ length: count + 1 }, (_, index) => {
+    const time = new Date(start.getTime() + index * safeStep * 60_000);
+    const point = pointAt(object, time, observer);
+    return { time, altitude: point?.altitude ?? Number.NaN, azimuth: point?.azimuth ?? Number.NaN };
+  });
 }
 
 /** Ranks easy-to-find targets by their peak altitude during the next astronomical night. */
