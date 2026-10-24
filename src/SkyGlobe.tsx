@@ -71,7 +71,8 @@ export default function SkyGlobe({ objects, lines, size, selectedId, colors, red
   const projected = useMemo(() => objects.map(object => ({
     object,
     ...project(object.azimuth, object.altitude, size, orientation),
-  })).sort((a, b) => a.depth - b.depth), [objects, orientation, size]);
+  })), [objects, orientation, size]);
+  const rendered = useMemo(() => [...projected].sort((a, b) => a.depth - b.depth), [projected]);
   const byId = useMemo(() => new Map(projected.map(point => [point.object.id, point])), [projected]);
 
   const pan = useMemo(() => PanResponder.create({
@@ -113,7 +114,7 @@ export default function SkyGlobe({ objects, lines, size, selectedId, colors, red
         {meridianPaths.map(({ azimuth, d }) => <Path key={`az-${azimuth}`} d={d} fill="none" stroke={colors.guide} strokeWidth=".8" strokeDasharray="2 4" />)}
         {projectedConstellations.map(({ key, first, second }) => <Line key={key} x1={first.x} y1={first.y} x2={second.x} y2={second.y} stroke={colors.constellation} strokeOpacity={first.depth < 0 && second.depth < 0 ? '.09' : '.52'} strokeWidth=".8" />)}
         <Path d={horizonPath} fill="none" stroke={colors.horizon} strokeWidth="1.8" strokeDasharray="4 2" />
-        {projected.map(({ object, x, y, depth }) => {
+        {rendered.map(({ object, x, y, depth }) => {
           const color = redMode
             ? (object.kind === 'Deep sky' ? colors.deep : ['Planet', 'Moon', 'Sun'].includes(object.kind) ? colors.planet : colors.star)
             : object.color;
