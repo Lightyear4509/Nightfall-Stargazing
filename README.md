@@ -4,7 +4,7 @@ An offline-first, privacy-focused sky guide. The current first-release target is
 
 ## Current development status
 
-The **v0.1.0 preview** is published on GitHub with a sideloadable Android APK and an offline-capable web PWA ZIP. Hosted CI passed the web export and offline-worker simulation, and built the Android APK after verifying its bundled JavaScript, foreground-only location permissions, lack of Internet/background-location permissions, and disabled Android backup. Five fixed-point comparisons against NASA/JPL Horizons (Mars, Moon, Sun, Venus, and Jupiter across four locations) pass within their recorded per-case tolerances; these checks do not validate all dates, catalog astrometry, or real device pointing. Physical-device installation, browser installation/offline use, accessibility, and field accuracy still need user testing. This preview is not a Play Store or App Store release.
+The **v0.1.0 preview** is published on GitHub with a sideloadable Android APK and an offline-capable web PWA ZIP. The web app is also hosted at [lightyear4509.github.io/Nightfall-Stargazing](https://lightyear4509.github.io/Nightfall-Stargazing/). Hosted CI passed the web export and offline-worker simulation, and built the Android APK after verifying its bundled JavaScript, foreground-only location permissions, lack of Internet/background-location permissions, and disabled Android backup. Five fixed-point comparisons against NASA/JPL Horizons (Mars, Moon, Sun, Venus, and Jupiter across four locations) pass within their recorded per-case tolerances; these checks do not validate all dates, catalog astrometry, or real device pointing. The hosted page renders in a browser, but real browser installation/offline use, physical-device installation, accessibility, and field accuracy still need user testing. This preview is not a Play Store or App Store release.
 
 ### Implemented in the current prototype
 
@@ -26,7 +26,7 @@ The **v0.1.0 preview** is published on GitHub with a sideloadable Android APK an
 - The sky chart uses IAU stick-figure connections for 86 named constellations; Serpens is split into head and tail sections, while the source provides no figure for Mensa or Microscopium. Two very faint HIP endpoints are outside the bundled magnitude-6 HYG subset, so their line sequences are split at those gaps. Constellation boundaries are not included.
 - Selected-object details estimate the next rise or set within 48 hours. The Tonight planner samples the Sun’s altitude for astronomical darkness and ranks a limited set of bright objects at 30-minute intervals. Times use the device time zone, which can differ from a manually selected observing location. Neither feature models terrain, weather, light pollution, or local atmospheric conditions; civil/nautical twilight display and device compass sensors are not included.
 - Native permission behavior, web offline operation, screen-reader/accessibility behavior, physical-device layout, and position accuracy need release-grade verification.
-- The preview APK and GitHub release exist. No Play Store AAB/listing, durable hosted website, iOS build, or App Store submission has been created. The GitHub repository slug rename from `Space-App` to `Nightfall-Stargazing` is still pending.
+- The preview APK, GitHub release, and GitHub Pages website exist. No Play Store AAB/listing, iOS build, or App Store submission has been created.
 
 ## Local development
 
