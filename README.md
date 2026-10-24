@@ -8,12 +8,12 @@ The **v0.1.0 preview** is published on GitHub with a sideloadable Android APK an
 
 ### Implemented in the current prototype
 
-- 2D local-sky chart with live time and hour-by-hour time controls.
+- Interactive 3D celestial globe with live local-sky positions, constellation connections, a rotating horizon ring, and drag-to-orbit controls; tap objects for details. The globe includes the complete bundled sky catalog and dims objects on its far side.
 - Offline “Tonight’s best sights” planner that finds astronomical darkness and ranks bright targets by their peak altitude, with a one-tap jump to each recommended time.
 - Sun, Moon, and five bright planets, calculated locally with Astronomy Engine; selected Moon/planet details include engine-computed visual magnitude and illuminated fraction.
 - 5,050-star HYG v4.1 naked-eye catalog plus 20 curated stars, 338 brighter OpenNGC galaxies/nebulae/clusters, and six curated deep-sky objects.
 - IAU stick-figure constellation lines bundled for offline use and mapped to the star catalog.
-- Search, object details, saved targets, opt-in foreground location following or manual coordinates, beginner guide, and a red-light mode that recolors the sky chart as well as the surrounding interface.
+- Search, object details, saved targets, opt-in foreground location following or manual coordinates, beginner guide, and a red-light mode that recolors the globe as well as the surrounding interface.
 - Screen-reader labels and control roles for core actions, coordinate/search inputs, catalog filters, save/remove actions, and selectable sky-chart markers; VoiceOver/TalkBack behavior still needs device verification.
 - Bundled “Sources & licenses” panel with key catalog credits and license terms, plus a full dependency and data-processing record in `DATA_LICENSES.md`.
 - Local persistence for coordinates, saved targets, and display preference.
@@ -23,6 +23,7 @@ The **v0.1.0 preview** is published on GitHub with a sideloadable Android APK an
 ### Known limits before a general release
 
 - Catalog stars use HYG v4.1 J2000 coordinates and proper motion with precession/nutation conversion. Imported catalog records have not yet been independently checked against another reference set; curated facts and the six curated deep-sky entries also need review.
+- The 3D globe is an interactive unit-sphere visualization of sky directions, not a distance-scaled model of the Solar System or galaxy. Dragging rotates the globe and its horizon together; far-side objects are dimmed. A native Android build and device interaction walkthrough are needed to confirm gesture behavior and rendering performance on physical hardware.
 - The sky chart uses IAU stick-figure connections for 86 named constellations; Serpens is split into head and tail sections, while the source provides no figure for Mensa or Microscopium. Two very faint HIP endpoints are outside the bundled magnitude-6 HYG subset, so their line sequences are split at those gaps. Constellation boundaries are not included.
 - Selected-object details estimate the next rise or set within 48 hours. The Tonight planner samples the Sun’s altitude for astronomical darkness and ranks a limited set of bright objects at 30-minute intervals. Times use the device time zone, which can differ from a manually selected observing location. Neither feature models terrain, weather, light pollution, or local atmospheric conditions; civil/nautical twilight display and device compass sensors are not included.
 - Native permission behavior, web offline operation, screen-reader/accessibility behavior, physical-device layout, and position accuracy need release-grade verification.

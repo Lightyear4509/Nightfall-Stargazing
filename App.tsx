@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, AppState, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import Svg, { Circle, Line, Path, Text as SvgText } from 'react-native-svg';
 import { bestTonightTargets, calculateSky, compass, nextHorizonEvent, Observer, SkyPoint } from './src/sky';
+import SkyGlobe from './src/SkyGlobe';
 import { LocationSessionGuard, PreferenceHydrationGuard } from './src/client-state-guards';
 import constellationData from './src/data/iau-constellation-lines-v1.json';
 
@@ -194,13 +194,6 @@ export default function App() {
     persistLocation({ latitude:lat, longitude:lon }, `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'}, ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? 'E' : 'W'}`); setShowManual(false);
   };
   const toggleNight = () => { hydrationGuard.current.markEdited('nightMode'); setRedMode(v => { AsyncStorage.setItem('observing.nightMode', String(!v)).catch(() => {}); return !v; }); };
-  const project = (o: SkyPoint) => {
-    const r = chart * 0.455 * (90 - Math.max(0, Math.min(90, o.altitude))) / 90;
-    const a = (o.azimuth - 90) * Math.PI / 180;
-    return { x:chart / 2 + r * Math.cos(a), y:chart / 2 + r * Math.sin(a) };
-  };
-  const plotted = sky.filter(o => o.altitude > 0).map(o => ({ o, ...project(o) }));
-  const xy = new Map(plotted.map(p => [p.o.id, p]));
   const timeLabel = skyTime.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
   const dateLabel = skyTime.toLocaleDateString([], { weekday:'long', month:'long', day:'numeric' });
   const shiftTime = (hours: number) => setSimulatedTime(new Date((simulatedTime ?? now).getTime() + hours * 60 * 60 * 1000));
@@ -230,18 +223,10 @@ export default function App() {
 
         <View style={styles.columns}>
           <View style={styles.mainColumn}>
-            <View style={styles.sectionHead}><View><Text style={[styles.sectionTitle,{color:dark.ink}]}>The sky overhead</Text><Text style={[styles.sectionNote,{color:dark.muted}]}>A live local chart · north is up</Text></View><Text style={[styles.livePill,{color:dark.accent,borderColor:dark.line}]}>● LIVE</Text></View>
+            <View style={styles.sectionHead}><View><Text style={[styles.sectionTitle,{color:dark.ink}]}>The sky overhead</Text><Text style={[styles.sectionNote,{color:dark.muted}]}>A live 3D sky globe · drag to rotate</Text></View><Text style={[styles.livePill,{color:dark.accent,borderColor:dark.line}]}>● LIVE</Text></View>
             <View style={[styles.chartWrap,{backgroundColor:chartColors.background,borderColor:dark.line}]}>
-              <Svg width={chart} height={chart} viewBox={`0 0 ${chart} ${chart}`}>
-                <Circle cx={chart/2} cy={chart/2} r={chart*.455} fill={chartColors.sky} stroke={chartColors.horizon} strokeWidth="1" />
-                {[.68,.36].map(q => <Circle key={q} cx={chart/2} cy={chart/2} r={chart*.455*q} fill="none" stroke={chartColors.guide} strokeWidth="1" strokeDasharray="2 5" />)}
-                <Line x1={chart/2} y1={chart*.045} x2={chart/2} y2={chart*.955} stroke={chartColors.guide} strokeWidth="1" />
-                <Line x1={chart*.045} y1={chart/2} x2={chart*.955} y2={chart/2} stroke={chartColors.guide} strokeWidth="1" />
-                {constellationLines.map(([a,b],i) => { const p=xy.get(a), q=xy.get(b); return p&&q ? <Line key={i} x1={p.x} y1={p.y} x2={q.x} y2={q.y} stroke={chartColors.constellation} strokeOpacity=".62" strokeWidth="1" /> : null; })}
-                {plotted.map(({o,x,y}) => { const color = redMode ? (o.kind === 'Deep sky' ? chartColors.deep : ['Planet','Moon','Sun'].includes(o.kind) ? chartColors.planet : chartColors.star) : o.color; return <React.Fragment key={o.id}><Circle cx={x} cy={y} r={Math.max(2.1,Math.min(5.5,5.2-o.magnitude*.7))} fill={color} opacity={o.kind==='Deep sky'?.7:1} /><Circle accessible accessibilityLabel={`${o.name}, ${o.kind}, altitude ${o.altitude.toFixed(1)} degrees, azimuth ${compass(o.azimuth)} ${o.azimuth.toFixed(1)} degrees. Select for details.`} cx={x} cy={y} r={11} fill="transparent" onPress={() => setSelected(o)} />{(['sirius','vega','arcturus','betelgeuse','moon','jupiter','venus','m31','m42'].includes(o.id)) && <SvgText x={x+7} y={y-7} fill={chartColors.label} fontSize="9">{o.name}</SvgText>}</React.Fragment>; })}
-                <SvgText x={chart/2} y={19} textAnchor="middle" fill={chartColors.cardinal} fontSize="10" letterSpacing="1">N</SvgText><SvgText x={chart-14} y={chart/2+4} textAnchor="middle" fill={chartColors.cardinal} fontSize="10">E</SvgText><SvgText x={chart/2} y={chart-6} textAnchor="middle" fill={chartColors.cardinal} fontSize="10">S</SvgText><SvgText x={14} y={chart/2+4} textAnchor="middle" fill={chartColors.cardinal} fontSize="10">W</SvgText>
-              </Svg>
-              <View style={styles.chartFoot}><Text style={[styles.chartFootText,{color:dark.muted}]}>HORIZON</Text><Text style={[styles.chartFootText,{color:dark.muted}]}>{visible.length} OBJECTS ABOVE</Text></View>
+              <SkyGlobe objects={sky} lines={constellationLines} size={chart} selectedId={selectedPoint?.id} colors={chartColors} redMode={redMode} muted={dark.muted} panel={dark.panel} line={dark.line} onSelect={setSelected} />
+              <View style={styles.chartFoot} pointerEvents="none"><Text style={[styles.chartFootText,{color:dark.muted}]}>HORIZON RING</Text><Text style={[styles.chartFootText,{color:dark.muted}]}>{visible.length} ABOVE · {sky.length-visible.length} BELOW</Text></View>
             </View>
             <View style={styles.legend}><View style={styles.legendItem}><View style={[styles.legendDot,{backgroundColor:chartColors.star}]}/><Text style={[styles.legendText,{color:dark.muted}]}>Stars</Text></View><View style={styles.legendItem}><View style={[styles.legendDot,{backgroundColor:chartColors.planet}]}/><Text style={[styles.legendText,{color:dark.muted}]}>Planets</Text></View><View style={styles.legendItem}><View style={[styles.legendDot,{backgroundColor:chartColors.deep}]}/><Text style={[styles.legendText,{color:dark.muted}]}>Deep sky</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Open sky guide" onPress={() => setTour(v => !v)}><Text style={[styles.guideLink,{color:dark.accent}]}>✦  Sky guide</Text></Pressable></View>
             {selectedPoint && <View style={[styles.detailCard,{backgroundColor:dark.panel,borderColor:dark.accent}]}><View style={styles.detailHeader}><View style={[styles.objectDot,{backgroundColor:selectedPoint.color}]}/><View style={{flex:1}}><Text style={[styles.objectName,{color:dark.ink}]}>{selectedPoint.name}</Text><Text style={[styles.objectMeta,{color:dark.muted}]}>{selectedPoint.kind}{selectedPoint.constellation ? ` · ${selectedPoint.constellation}` : ''}</Text></View><Pressable accessibilityRole="button" accessibilityLabel={saved.includes(selectedPoint.id) ? `Remove ${selectedPoint.name} from saved targets` : `Save ${selectedPoint.name} to targets`} accessibilityState={{ selected:saved.includes(selectedPoint.id) }} onPress={() => saveToggle(selectedPoint.id)}><Text style={[styles.saveIcon,{color:dark.gold}]}>{saved.includes(selectedPoint.id) ? '★' : '☆'}</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel={`Close ${selectedPoint.name} details`} onPress={() => setSelected(null)}><Text style={[styles.close,{color:dark.muted}]}>×</Text></Pressable></View><Text style={[styles.body,{color:dark.muted}]}>{selectedPoint.description}</Text><View style={styles.detailStats}><Text style={[styles.statText,{color:dark.ink}]}>{selectedPoint.altitude.toFixed(0)}° alt</Text><Text style={[styles.statText,{color:dark.ink}]}>{compass(selectedPoint.azimuth)} · {selectedPoint.azimuth.toFixed(0)}°</Text><Text style={[styles.statText,{color:dark.ink}]}>{selectedPoint.magnitude.toFixed(1)} mag</Text>{selectedPoint.illumination !== undefined && <Text style={[styles.statText,{color:dark.ink}]}>{Math.round(selectedPoint.illumination * 100)}% illuminated</Text>}</View><Text style={[styles.statText,{color:dark.muted,marginTop:7}]}>{horizonEvent ? `Next ${horizonEvent.kind} · ${horizonEvent.time.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}` : 'No horizon crossing within 48 hours'}</Text><Text style={[styles.statText,{color:dark.dim,marginTop:5}]}>Estimate uses device time; the observing location may use another time zone. Terrain and local atmospheric conditions are not included.</Text></View>}
