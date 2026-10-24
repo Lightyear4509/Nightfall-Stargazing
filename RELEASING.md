@@ -2,11 +2,11 @@
 
 ## Current status
 
-The source is published in the public repository [Lightyear4509/Space-App](https://github.com/Lightyear4509/Space-App), and the **Nightfall Stargazing v0.1.0 preview** is available on the [GitHub Releases page](https://github.com/Lightyear4509/Space-App/releases/tag/v0.1.0). It includes the sideloadable Android APK, web PWA ZIP, release notes, and checksums. The repository slug change to `Nightfall-Stargazing` is still pending. Release run [#5](https://github.com/Lightyear4509/Space-App/actions/runs/40135387367) built and published the assets successfully. See [SOURCE_OF_TRUTH.md](SOURCE_OF_TRUTH.md) for the append-only project record.
+The source is published in the public repository [Lightyear4509/Nightfall-Stargazing](https://github.com/Lightyear4509/Nightfall-Stargazing), and the **Nightfall Stargazing v0.1.0 preview** is available on the [GitHub Releases page](https://github.com/Lightyear4509/Nightfall-Stargazing/releases/tag/v0.1.0). It includes the sideloadable Android APK, web PWA ZIP, release notes, and checksums. Release run [#5](https://github.com/Lightyear4509/Nightfall-Stargazing/actions/runs/40135387367) built and published the assets successfully. See [SOURCE_OF_TRUTH.md](SOURCE_OF_TRUTH.md) for the append-only project record.
 
 ## Android preview download
 
-1. Download `Nightfall-Stargazing-Android-v0.1.0.apk` from the [v0.1.0 release](https://github.com/Lightyear4509/Space-App/releases/tag/v0.1.0).
+1. Download `Nightfall-Stargazing-Android-v0.1.0.apk` from the [v0.1.0 release](https://github.com/Lightyear4509/Nightfall-Stargazing/releases/tag/v0.1.0).
 2. Install it on an Android device. Android may ask the user to allow installs from the browser or file manager used to open it.
 
 The preview APK contains the JavaScript app bundle and passed checks for foreground fine-location permission, absence of Internet/network-state/background-location permissions, and disabled Android backup. It uses the generated development signing configuration. It is for testing and sideloading, not a production Play Store release. A separately downloadable Actions artifact expires after 30 days; the APK on the GitHub Release page is permanent.
@@ -21,7 +21,7 @@ To request a build without a code change, open **Actions → Build checks → Ru
 
 ## Web app download
 
-Download `Nightfall-Stargazing-Web-v0.1.0.zip` from the [v0.1.0 release](https://github.com/Lightyear4509/Space-App/releases/tag/v0.1.0) and extract it. The files are a static web export; host the contents at the web origin root over HTTPS. The app uses root-relative paths and registers a root-scope service worker. A user must open the site once while online before the browser can precache it for later offline use. Browser geolocation is available only where the browser grants permission on a secure origin.
+Download `Nightfall-Stargazing-Web-v0.1.0.zip` from the [v0.1.0 release](https://github.com/Lightyear4509/Nightfall-Stargazing/releases/tag/v0.1.0) and extract it. The files are a static web export; host the contents at the web origin root over HTTPS. The app uses root-relative paths and registers a root-scope service worker. A user must open the site once while online before the browser can precache it for later offline use. Browser geolocation is available only where the browser grants permission on a secure origin.
 
 The web export uses a same-origin Content Security Policy for page-initiated connections and resources. The automated offline check exercises the generated worker with a Node-based simulation. A real browser installation/offline walkthrough is still required before calling the web release verified.
 
