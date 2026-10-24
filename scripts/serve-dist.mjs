@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../dist');
 const port = Number(process.env.STARGAZING_PREVIEW_PORT) || 4173;
+const baseUrl = process.env.NIGHTFALL_WEB_BASE_URL?.replace(/\/+$/, '') ?? '';
 const mime = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -23,6 +24,8 @@ http.createServer((request, response) => {
   let pathname;
   try { pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname); }
   catch { response.writeHead(400).end('Bad request'); return; }
+  if (baseUrl && pathname === baseUrl) pathname = '/';
+  else if (baseUrl && pathname.startsWith(`${baseUrl}/`)) pathname = pathname.slice(baseUrl.length);
   const relative = pathname.replace(/^\/+/, '') || 'index.html';
   const candidate = path.resolve(root, relative);
   if (candidate !== root && !candidate.startsWith(`${root}${path.sep}`)) {

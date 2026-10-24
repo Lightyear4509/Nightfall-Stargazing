@@ -8,6 +8,9 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const distRoot = path.join(projectRoot, 'dist');
 const workerSource = fs.readFileSync(path.join(distRoot, 'sw.js'), 'utf8');
 const origin = 'https://stargazing.test';
+const baseUrl = process.env.NIGHTFALL_WEB_BASE_URL?.replace(/\/+$/, '') ?? '';
+assert.ok(!baseUrl || (baseUrl.startsWith('/') && !baseUrl.includes('..')), 'base URL is a safe absolute path prefix');
+const appRootUrl = `${baseUrl}/`;
 const cacheStore = new Map();
 const listeners = new Map();
 let networkAvailable = true;
@@ -38,7 +41,13 @@ function makeCache(name) {
 async function networkFetch(input) {
   if (!networkAvailable) throw new TypeError('Network is offline');
   const url = new URL(typeof input === 'string' ? input : input.url, origin);
-  const relative = decodeURIComponent(url.pathname.replace(/^\/+/, '')) || 'index.html';
+  let requestPath = decodeURIComponent(url.pathname);
+  if (baseUrl) {
+    if (requestPath === baseUrl) requestPath = '/';
+    else if (requestPath.startsWith(`${baseUrl}/`)) requestPath = requestPath.slice(baseUrl.length);
+    else return new Response('Not found', { status: 404 });
+  }
+  const relative = requestPath.replace(/^\/+/, '') || 'index.html';
   const absolute = path.resolve(distRoot, relative);
   if (!absolute.startsWith(`${distRoot}${path.sep}`) || !fs.existsSync(absolute) || !fs.statSync(absolute).isFile()) {
     return new Response('Not found', { status: 404 });
@@ -73,10 +82,14 @@ const self = {
 const context = { caches, fetch: networkFetch, self, URL, Request, Response, TypeError };
 const workerMetadata = vm.runInNewContext(`${workerSource}\n;({ CACHE_NAME, PRECACHE_URLS })`, context);
 assert.ok(workerMetadata.CACHE_NAME.startsWith('nightfall-'), 'worker uses a versioned app cache');
-assert.ok(workerMetadata.PRECACHE_URLS.includes('/index.html'), 'precache includes the app entry page');
+assert.ok(workerMetadata.PRECACHE_URLS.includes(`${baseUrl}/index.html`), 'precache includes the app entry page under the configured base URL');
 const exportedHtml = fs.readFileSync(path.join(distRoot, 'index.html'), 'utf8');
 assert.match(exportedHtml, /http-equiv="Content-Security-Policy"[^>]*connect-src 'self'/, 'web page restricts outbound connections to its own origin');
 assert.doesNotMatch(exportedHtml, /<script>(?!\s*\/>)/, 'web page does not need inline scripts under the restrictive script policy');
+assert.ok(exportedHtml.includes(`${baseUrl}/manifest.json`), 'web page links to its manifest under the configured base URL');
+const exportedManifest = JSON.parse(fs.readFileSync(path.join(distRoot, 'manifest.json'), 'utf8'));
+assert.equal(exportedManifest.start_url, appRootUrl, 'PWA start URL matches the configured base URL');
+assert.equal(exportedManifest.scope, appRootUrl, 'PWA scope matches the configured base URL');
 
 let installPromise;
 listeners.get('install')({ waitUntil(promise) { installPromise = promise; } });
@@ -96,7 +109,7 @@ assert.equal(cacheStore.has('unrelated-cache'), true, 'activation leaves unrelat
 networkAvailable = false;
 let navigationResponse;
 listeners.get('fetch')({
-  request: { method: 'GET', mode: 'navigate', url: `${origin}/?offline-check=1` },
+  request: { method: 'GET', mode: 'navigate', url: `${origin}${appRootUrl}?offline-check=1` },
   respondWith(promise) { navigationResponse = promise; },
 });
 const offlinePage = await navigationResponse;

@@ -1,6 +1,6 @@
 # Privacy Notice — Nightfall Stargazing
 
-**Draft for the current development build.** The app has not yet been audited in a signed release. Before publication, reconcile this notice with the final binary, its dependencies, platform behavior, and store disclosures. Replace the contact placeholder.
+**Draft for preview v0.1.0.** This notice is not a complete audit of signed binaries or platform providers. Reconcile it with final production builds and store disclosures before general release. Replace the contact placeholder.
 
 ## Data handling
 
@@ -16,7 +16,7 @@ Nightfall Stargazing does not transmit location to an app-operated or third-part
 
 ## Network and offline use
 
-Core catalog and astronomy calculations are bundled and do not need network access. Android's app manifest removes Internet permission. The static web export includes a Content Security Policy that restricts page-originated connections and loaded scripts/assets to the same origin. Web needs a network connection for the first download and for hosting/distribution; the hosting provider can receive ordinary request metadata such as an IP address, but the app does not include coordinates in its asset requests. The web policy does not constrain browser, operating-system, or location-provider traffic. Offline behavior still requires browser-level verification. App stores, hosting providers, and operating-system services operate under their own privacy terms.
+Core catalog and astronomy calculations are bundled and do not need network access. Android's app manifest removes Internet permission. The static web export includes a Content Security Policy that restricts page-originated connections and loaded scripts/assets to the same origin. The web edition is configured for GitHub Pages at https://lightyear4509.github.io/Nightfall-Stargazing/; GitHub may receive ordinary request metadata such as an IP address to serve the site and its assets, but the app does not include coordinates in those requests or send observing location to GitHub. Web needs a network connection for the first download and for hosting/distribution. The web policy does not constrain browser, operating-system, or location-provider traffic. Offline behavior still requires browser-level verification. App stores, hosting providers, and operating-system services operate under their own privacy terms.
 
 ## Permissions and controls
 
