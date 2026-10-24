@@ -1,0 +1,26 @@
+{
+  "source": "NASA/JPL Horizons API",
+  "sourceUrl": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+  "query": {
+    "COMMAND": "599",
+    "EPHEM_TYPE": "OBSERVER",
+    "CENTER": "coord@399",
+    "COORD_TYPE": "GEODETIC",
+    "SITE_COORD": "151.2093,-33.8688,0",
+    "TLIST": "2026-03-20 12:00:00 UTC",
+    "QUANTITIES": "4 (airless apparent azimuth/elevation)",
+    "CSV_FORMAT": "YES",
+    "APPARENT": "AIRLESS"
+  },
+  "utc": "2026-03-20T12:00:00.000Z",
+  "observer": {
+    "latitude": -33.8688,
+    "longitude": 151.2093,
+    "heightMeters": 0
+  },
+  "target": "Jupiter (599)",
+  "azimuthDegrees": 318.307441,
+  "altitudeDegrees": 20.188211,
+  "toleranceArcseconds": 5,
+  "notes": "Azimuth is clockwise from true north. JPL response reported 318.307441 degrees azimuth and 20.188211 degrees airless apparent elevation. The location is a fixed public test point, not device-derived data."
+}

@@ -1,0 +1,26 @@
+{
+  "source": "NASA/JPL Horizons API",
+  "sourceUrl": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+  "query": {
+    "COMMAND": "299",
+    "EPHEM_TYPE": "OBSERVER",
+    "CENTER": "coord@399",
+    "COORD_TYPE": "GEODETIC",
+    "SITE_COORD": "0.1278,51.5074,0",
+    "TLIST": "2026-10-25 00:00:00 UTC",
+    "QUANTITIES": "4 (airless apparent azimuth/elevation)",
+    "CSV_FORMAT": "YES",
+    "APPARENT": "AIRLESS"
+  },
+  "utc": "2026-10-25T00:00:00.000Z",
+  "observer": {
+    "latitude": 51.5074,
+    "longitude": 0.1278,
+    "heightMeters": 0
+  },
+  "target": "Venus (299)",
+  "azimuthDegrees": 13.074247,
+  "altitudeDegrees": -55.453106,
+  "toleranceArcseconds": 40,
+  "notes": "Azimuth is clockwise from true north. JPL response reported 13.074247 degrees azimuth and -55.453106 degrees airless apparent elevation. The 40-arcsecond tolerance accommodates the observed azimuth difference for this below-horizon geometry. The location is a fixed public test point, not device-derived data."
+}

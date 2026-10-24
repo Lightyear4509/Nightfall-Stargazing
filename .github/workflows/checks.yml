@@ -1,0 +1,149 @@
+name: Build checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  EXPO_NO_TELEMETRY: '1'
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check:android-module
+      - run: pnpm build:icon
+      - run: pnpm typecheck
+      - run: pnpm check:privacy
+      - run: pnpm check:sky
+      - run: pnpm check:state
+      - run: pnpm export:web
+      - run: node --check scripts/check-sky-catalog.mjs
+      - run: node --check scripts/check-client-privacy.mjs
+      - run: node --check scripts/check-client-state-guards.mjs
+      - run: node --check scripts/check-android-module.mjs
+      - run: node --check scripts/build-app-icon.mjs
+      - run: node --check scripts/generate-web-sw.mjs
+      - run: node --check scripts/serve-dist.mjs
+      - run: node --check scripts/build-constellation-lines.mjs
+      - run: node --check dist/sw.js
+      - name: Verify offline service-worker behavior
+        run: node scripts/check-web-offline.mjs
+      - name: Upload offline web build
+        uses: actions/upload-artifact@v7
+        with:
+          name: stargazing-web-pwa
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+      - name: Install Android SDK packages
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0' 'ndk;27.1.12297006'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check:android-module
+      - run: pnpm build:icon
+      - run: pnpm exec expo prebuild --platform android --no-install --clean
+      - name: Build standalone preview APK
+        run: ./gradlew --no-daemon :app:assembleRelease
+        working-directory: android
+      - name: Verify APK location permissions
+        shell: bash
+        run: |
+          APK=android/app/build/outputs/apk/release/app-release.apk
+          test -f "$APK"
+          PERMISSIONS="$(apkanalyzer manifest permissions "$APK")"
+          printf '%s\n' "$PERMISSIONS"
+          grep -q 'android.permission.ACCESS_FINE_LOCATION' <<<"$PERMISSIONS"
+          if grep -Eq 'android\.permission\.(INTERNET|ACCESS_BACKGROUND_LOCATION|ACCESS_NETWORK_STATE)' <<<"$PERMISSIONS"; then
+            echo 'Unexpected network or background-location permission in APK.' >&2
+            exit 1
+          fi
+          APK_MANIFEST="$(apkanalyzer manifest print "$APK")"
+          grep -q 'android:allowBackup="false"' <<<"$APK_MANIFEST"
+          APK_FILES="$(apkanalyzer files list "$APK")"
+          grep -q 'assets/index.android.bundle' <<<"$APK_FILES"
+      - name: Upload standalone preview APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: stargazing-android-preview-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
+
+  publish-preview:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [web, android]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: stargazing-android-preview-apk
+          path: release/android
+      - uses: actions/download-artifact@v8
+        with:
+          name: stargazing-web-pwa
+          path: release/web
+      - name: Package permanent preview assets and verify version
+        shell: bash
+        run: |
+          APP_VERSION="$(node -p "require('./app.json').expo.version")"
+          test "$GITHUB_REF_NAME" = "v$APP_VERSION" || {
+            echo "Tag $GITHUB_REF_NAME must match app.json version v$APP_VERSION." >&2
+            exit 1
+          }
+          cp release/android/app-release.apk "release/Nightfall-Stargazing-Android-$GITHUB_REF_NAME.apk"
+          (cd release/web && zip -rq "../Nightfall-Stargazing-Web-$GITHUB_REF_NAME.zip" .)
+          cd release
+          sha256sum "Nightfall-Stargazing-Android-$GITHUB_REF_NAME.apk" "Nightfall-Stargazing-Web-$GITHUB_REF_NAME.zip" > SHA256SUMS.txt
+          cat > RELEASE-NOTES.txt <<'EOF'
+          Nightfall Stargazing preview release.
+
+          Android is a sideloadable APK signed with the generated development key. It is not a Google Play production build. The web ZIP contains the offline-capable PWA export; host its contents at an HTTPS site root. The PWA must be opened once online before the browser can cache it for later offline use.
+
+          Core sky calculations and bundled catalogs run locally. Android has no INTERNET permission and location is optional, foreground-only, and processed on device. Read PRIVACY.md and DATA_LICENSES.md in the matching source tag for details and limitations.
+          EOF
+      - name: Publish versioned preview release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "release/Nightfall-Stargazing-Android-$GITHUB_REF_NAME.apk" \
+            "release/Nightfall-Stargazing-Web-$GITHUB_REF_NAME.zip" \
+            release/SHA256SUMS.txt \
+            release/RELEASE-NOTES.txt \
+            --verify-tag --prerelease \
+            --title "Nightfall Stargazing $GITHUB_REF_NAME (preview)" \
+            --notes-file release/RELEASE-NOTES.txt

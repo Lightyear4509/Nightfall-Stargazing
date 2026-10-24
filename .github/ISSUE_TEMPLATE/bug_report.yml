@@ -1,0 +1,67 @@
+name: Bug report
+description: Report a reproducible problem in Nightfall Stargazing.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: "Please do not include your latitude/longitude, a location trail, account data, or unique device identifiers. If a location-dependent issue needs context, use the app's Example location instead of your own."
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: Find this in the release tag or downloaded build name.
+      placeholder: 0.1.0 preview
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Android
+        - Web
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: device-browser
+    attributes:
+      label: Device or browser
+      description: Give the model/browser and OS version; do not include serial numbers or advertising IDs.
+      placeholder: Pixel 8, Android 16
+    validations:
+      required: false
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the actions that make the problem occur.
+      placeholder: "1. Open the sky chart\n2. Search for..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: Expected and actual behavior
+      description: Include what you expected and what happened instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: location-mode
+    attributes:
+      label: Location mode, if relevant
+      options:
+        - Not relevant
+        - Manual coordinates
+        - Device location
+        - Browser location
+        - Prefer not to say
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots are welcome after removing precise location and personal/device identifiers.
+    validations:
+      required: false

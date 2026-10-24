@@ -1,0 +1,36 @@
+{
+  "name": "stargazing",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "main": "expo/AppEntry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "web": "expo start --web",
+    "export:web": "expo export --platform web && node scripts/generate-web-sw.mjs",
+    "preview:web": "node scripts/serve-dist.mjs",
+    "check:sky": "node scripts/check-sky-catalog.mjs",
+    "check:privacy": "node scripts/check-client-privacy.mjs",
+    "check:state": "node scripts/check-client-state-guards.mjs",
+    "check:android-module": "node scripts/check-android-module.mjs",
+    "build:icon": "node scripts/build-app-icon.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "astronomy-engine": "2.1.19",
+    "expo": "~57.0.31",
+    "expo-location": "~57.0.22",
+    "expo-modules-core": "~57.0.24",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-svg": "15.15.4",
+    "react-native-web": "0.21.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.0",
+    "typescript": "~5.9.2"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "source": "NASA/JPL Horizons API",
+  "sourceUrl": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+  "query": {
+    "COMMAND": "10",
+    "EPHEM_TYPE": "OBSERVER",
+    "CENTER": "coord@399",
+    "COORD_TYPE": "GEODETIC",
+    "SITE_COORD": "0,0,0",
+    "TLIST": "2026-06-21 12:00:00 UTC",
+    "QUANTITIES": "4 (airless apparent azimuth/elevation)",
+    "CSV_FORMAT": "YES",
+    "APPARENT": "AIRLESS"
+  },
+  "utc": "2026-06-21T12:00:00.000Z",
+  "observer": {
+    "latitude": 0,
+    "longitude": 0,
+    "heightMeters": 0
+  },
+  "target": "Sun (10)",
+  "azimuthDegrees": 1.04795,
+  "altitudeDegrees": 66.557037,
+  "toleranceArcseconds": 5,
+  "notes": "Azimuth is clockwise from true north. JPL response reported 1.047950 degrees azimuth and 66.557037 degrees airless apparent elevation. The location is a fixed public test point, not device-derived data."
+}

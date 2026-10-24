@@ -1,0 +1,26 @@
+{
+  "source": "NASA/JPL Horizons API",
+  "sourceUrl": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+  "query": {
+    "COMMAND": "301",
+    "EPHEM_TYPE": "OBSERVER",
+    "CENTER": "coord@399",
+    "COORD_TYPE": "GEODETIC",
+    "SITE_COORD": "-74.006,40.7128,0",
+    "TLIST": "2026-10-25 00:00:00 UTC",
+    "QUANTITIES": "4 (airless apparent azimuth/elevation)",
+    "CSV_FORMAT": "YES",
+    "APPARENT": "AIRLESS"
+  },
+  "utc": "2026-10-25T00:00:00.000Z",
+  "observer": {
+    "latitude": 40.7128,
+    "longitude": -74.006,
+    "heightMeters": 0
+  },
+  "target": "Moon (301)",
+  "azimuthDegrees": 107.349077,
+  "altitudeDegrees": 32.586891,
+  "toleranceArcseconds": 5,
+  "notes": "Azimuth is clockwise from true north. JPL response reported 107.349077 degrees azimuth and 32.586891 degrees airless apparent elevation. The location is a fixed public test point, not device-derived data."
+}
